@@ -1,0 +1,18 @@
+Problem:
+Pivot the Occupation column in OCCUPATIONS so that each Name is sorted alphabetically and displayed underneath its corresponding Occupation. 
+The output column headers should be Doctor, Professor, Singer, and Actor, respectively.
+
+Note: Print NULL when there are no more names corresponding to an occupation.
+
+Solution:
+
+Select 
+    max(Case When occupation = 'Doctor' then Name END) as Doctor,
+    max(Case When occupation = 'Professor' then Name END) as Professor,  
+    max(Case When occupation = 'Singer' then Name END) as Singer, 
+    max(Case When occupation = 'Actor' then Name END) as Actor
+from
+  (Select *,
+   Row_number() over(partition by occupation order by name) rn
+   from occupations) a
+Group by a.rn
