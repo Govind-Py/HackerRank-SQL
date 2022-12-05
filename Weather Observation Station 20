@@ -1,0 +1,15 @@
+Problem:
+A median is defined as a number separating the higher half of a data set from the lower half.
+Query the median of the Northern Latitudes (LAT_N) from STATION and round your answer to 4 decimal places.
+
+Solution:
+with tbl as
+(
+    select lat_n,
+    row_number() over(order by lat_n asc) as lat_asc,
+    row_number() over(order by lat_n desc) as lat_desc
+    from station
+)
+
+select round(avg(lat_n),4) from tbl
+where lat_asc in (lat_desc , lat_desc+1, lat_desc-1 )
