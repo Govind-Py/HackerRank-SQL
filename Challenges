@@ -1,0 +1,28 @@
+Problem:
+
+Julia asked her students to create some coding challenges. 
+Write a query to print the hacker_id, name, and the total number of challenges created by each student. 
+Sort your results by the total number of challenges in descending order. 
+If more than one student created the same number of challenges, then sort the result by hacker_id. 
+If more than one student created the same number of challenges and the count is less than the maximum number of challenges created, 
+then exclude those students from the result.
+
+Solutions:
+
+with tb as(
+select hacker_id,
+name, 
+chal_count, 
+count(chal_count) over(partition by chal_count) as chal_count_count 
+from ( 
+    select c.hacker_id as hacker_id,
+    name, 
+    count(challenge_id) as chal_count 
+    from challenges c inner join hackers h on c.hacker_id=h.hacker_id 
+    group by c.hacker_id, name 
+    ) as final)
+
+select hacker_id,
+name,
+chal_count from tb where chal_count_count=1 or chal_count=(select max(chal_count) from tb) 
+order by chal_count desc, hacker_id;
